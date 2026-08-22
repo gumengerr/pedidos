@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos — DistribuiPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-mark">📦</div>
+      <div><strong>DistribuiPro</strong><small>Gestão de distribuidora</small></div>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="ic">📊</span> Dashboard</a></li>
+      <li class="active"><a href="pedidos.html"><span class="ic">🧾</span> Pedidos</a></li>
+      <li><a href="estoque.html"><span class="ic">📦</span> Estoque</a></li>
+      <li><a href="clientes.html"><span class="ic">👥</span> Clientes</a></li>
+      <li><a href="vendedores.html"><span class="ic">🧑‍💼</span> Vendedores</a></li>
+      <li><a href="comissoes.html"><span class="ic">💰</span> Comissões</a></li>
+      <li><a href="entregas.html"><span class="ic">🚚</span> Entregas</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <div class="sidebar-user">
+        <div class="avatar">A</div>
+        <div class="who"><strong id="sidebar-user-email">admin@distribuipro.com</strong>Administrador</div>
+      </div>
+      <button class="btn-logout" id="btn-logout">Sair</button>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="sidebar-toggle">☰</button>
+        <div>
+          <p class="page-title">Pedidos</p>
+          <p class="page-sub">Gerencie os pedidos da distribuidora</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="pill-date" id="pill-date"></span>
+        <button class="btn btn-primary" id="btn-novo-pedido">+ Novo Pedido</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-body">
+          <div class="toolbar">
+            <div class="search-box">
+              <span class="ic">🔎</span>
+              <input type="text" id="busca-pedido" placeholder="Buscar por número ou cliente...">
+            </div>
+            <select class="select-filter" id="filtro-status">
+              <option value="">Todos os status</option>
+            </select>
+            <select class="select-filter" id="filtro-vendedor">
+              <option value="">Todos os vendedores</option>
+            </select>
+            <select class="select-filter" id="filtro-cliente">
+              <option value="">Todos os clientes</option>
+            </select>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Número</th><th>Data</th><th>Cliente</th><th>Vendedor</th>
+                  <th>Produtos</th><th>Valor</th><th>Status</th><th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbl-pedidos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Novo/Editar Pedido -->
+<div class="modal" id="modal-pedido">
+  <div class="modal-content modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-pedido-titulo">Novo Pedido</h3>
+      <button class="modal-close" onclick="closeModal('modal-pedido')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-pedido" novalidate>
+        <input type="hidden" id="pedido-id">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Cliente <span class="req">*</span></label>
+            <select id="pedido-cliente"><option value="">Selecione um cliente</option></select>
+            <span class="field-error" id="err-pedido-cliente">Selecione um cliente.</span>
+          </div>
+          <div class="form-field">
+            <label>Vendedor <span class="req">*</span></label>
+            <select id="pedido-vendedor"><option value="">Selecione um vendedor</option></select>
+            <span class="field-error" id="err-pedido-vendedor">Selecione um vendedor.</span>
+          </div>
+          <div class="form-field">
+            <label>Data <span class="req">*</span></label>
+            <input type="date" id="pedido-data">
+          </div>
+          <div class="form-field">
+            <label>Forma de pagamento <span class="req">*</span></label>
+            <select id="pedido-forma-pagamento">
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="PIX">PIX</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+              <option value="Boleto">Boleto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="detail-section-title">Produtos do pedido</div>
+        <div class="items-head">
+          <span>Produto</span><span>Qtd.</span><span>Preço unit.</span><span>Subtotal</span><span></span>
+        </div>
+        <div id="itens-pedido"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-add-item" style="margin-top:8px;">+ Adicionar produto</button>
+        <span class="field-error" id="err-pedido-itens">Adicione ao menos um produto ao pedido.</span>
+
+        <div class="form-grid" style="margin-top:16px;">
+          <div class="form-field">
+            <label>Desconto (R$)</label>
+            <input type="number" id="pedido-desconto" min="0" step="0.01" value="0">
+          </div>
+          <div class="form-field full">
+            <label>Observações</label>
+            <textarea id="pedido-observacoes" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="totals-box">
+          <div class="line"><span>Subtotal</span><span class="mono" id="totais-subtotal">R$ 0,00</span></div>
+          <div class="line"><span>Desconto</span><span class="mono" id="totais-desconto">R$ 0,00</span></div>
+          <div class="line total"><span>Total</span><span class="mono" id="totais-total">R$ 0,00</span></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-pedido')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar-pedido">Salvar pedido</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Visualizar Pedido -->
+<div class="modal" id="modal-ver-pedido">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h3>Detalhes do pedido</h3>
+      <button class="modal-close" onclick="closeModal('modal-ver-pedido')">✕</button>
+    </div>
+    <div class="modal-body" id="ver-pedido-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-ver-pedido')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Alterar status -->
+<div class="modal" id="modal-status-pedido">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h3>Alterar status do pedido</h3>
+      <button class="modal-close" onclick="closeModal('modal-status-pedido')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="status-pedido-id">
+      <div class="form-field">
+        <label>Novo status</label>
+        <select id="select-novo-status"></select>
+      </div>
+      <p class="text-muted" style="font-size:12.5px; margin-top:10px;">
+        Ao confirmar um pedido, o estoque dos produtos é baixado automaticamente. Ao cancelar um pedido já confirmado, o estoque é devolvido.
+      </p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-status-pedido')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirmar-status">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/pedidos.js"></script>
+</body>
+</html>

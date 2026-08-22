@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estoque — DistribuiPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-mark">📦</div>
+      <div><strong>DistribuiPro</strong><small>Gestão de distribuidora</small></div>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="ic">📊</span> Dashboard</a></li>
+      <li><a href="pedidos.html"><span class="ic">🧾</span> Pedidos</a></li>
+      <li class="active"><a href="estoque.html"><span class="ic">📦</span> Estoque</a></li>
+      <li><a href="clientes.html"><span class="ic">👥</span> Clientes</a></li>
+      <li><a href="vendedores.html"><span class="ic">🧑‍💼</span> Vendedores</a></li>
+      <li><a href="comissoes.html"><span class="ic">💰</span> Comissões</a></li>
+      <li><a href="entregas.html"><span class="ic">🚚</span> Entregas</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <div class="sidebar-user">
+        <div class="avatar">A</div>
+        <div class="who"><strong id="sidebar-user-email">admin@distribuipro.com</strong>Administrador</div>
+      </div>
+      <button class="btn-logout" id="btn-logout">Sair</button>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="sidebar-toggle">☰</button>
+        <div>
+          <p class="page-title">Estoque</p>
+          <p class="page-sub">Controle de produtos e movimentações</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="pill-date" id="pill-date"></span>
+        <button class="btn btn-primary" id="btn-novo-produto">+ Novo Produto</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-body">
+          <div class="toolbar">
+            <div class="search-box">
+              <span class="ic">🔎</span>
+              <input type="text" id="busca-produto" placeholder="Buscar produto...">
+            </div>
+            <select class="select-filter" id="filtro-categoria"><option value="">Todas as categorias</option></select>
+            <select class="select-filter" id="filtro-estoque">
+              <option value="">Todos os níveis</option>
+              <option value="normal">Estoque normal</option>
+              <option value="baixo">Estoque baixo</option>
+              <option value="zero">Sem estoque</option>
+            </select>
+            <select class="select-filter" id="ordenar-produto">
+              <option value="nome">Ordenar: Nome (A-Z)</option>
+              <option value="estoque-asc">Ordenar: Estoque (menor)</option>
+              <option value="estoque-desc">Ordenar: Estoque (maior)</option>
+              <option value="preco-asc">Ordenar: Preço (menor)</option>
+              <option value="preco-desc">Ordenar: Preço (maior)</option>
+            </select>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Estoque mín.</th><th>Status</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tbl-produtos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Movimentações de estoque</h3>
+            <p>Histórico de entradas, saídas e ajustes</p>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-nova-mov">+ Nova movimentação</button>
+        </div>
+        <div class="card-body table-scroll">
+          <table class="data-table">
+            <thead><tr><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Data</th><th>Motivo</th></tr></thead>
+            <tbody id="tbl-movimentacoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Novo/Editar Produto -->
+<div class="modal" id="modal-produto">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h3 id="modal-produto-titulo">Novo Produto</h3>
+      <button class="modal-close" onclick="closeModal('modal-produto')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-produto" novalidate>
+        <input type="hidden" id="produto-id">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Código <span class="req">*</span></label>
+            <input type="text" id="produto-codigo" placeholder="PRD-013">
+            <span class="field-error" id="err-produto-codigo">Informe um código.</span>
+          </div>
+          <div class="form-field">
+            <label>Nome <span class="req">*</span></label>
+            <input type="text" id="produto-nome" placeholder="Nome do produto">
+            <span class="field-error" id="err-produto-nome">Informe o nome do produto.</span>
+          </div>
+          <div class="form-field">
+            <label>Categoria <span class="req">*</span></label>
+            <input type="text" id="produto-categoria" placeholder="Bebidas, Mercearia...">
+          </div>
+          <div class="form-field">
+            <label>Marca</label>
+            <input type="text" id="produto-marca">
+          </div>
+          <div class="form-field">
+            <label>Unidade <span class="req">*</span></label>
+            <select id="produto-unidade">
+              <option value="UN">UN</option><option value="PCT">PCT</option><option value="CX">CX</option>
+              <option value="KG">KG</option><option value="L">L</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Fornecedor</label>
+            <input type="text" id="produto-fornecedor">
+          </div>
+          <div class="form-field">
+            <label>Preço de custo (R$) <span class="req">*</span></label>
+            <input type="number" id="produto-preco-custo" min="0" step="0.01">
+            <span class="field-error" id="err-produto-preco-custo">Informe um valor válido.</span>
+          </div>
+          <div class="form-field">
+            <label>Preço de venda (R$) <span class="req">*</span></label>
+            <input type="number" id="produto-preco-venda" min="0" step="0.01">
+            <span class="field-error" id="err-produto-preco-venda">Informe um valor válido.</span>
+          </div>
+          <div class="form-field">
+            <label>Estoque atual <span class="req">*</span></label>
+            <input type="number" id="produto-estoque-atual" min="0" step="1">
+            <span class="field-error" id="err-produto-estoque-atual">Informe uma quantidade válida.</span>
+          </div>
+          <div class="form-field">
+            <label>Estoque mínimo <span class="req">*</span></label>
+            <input type="number" id="produto-estoque-minimo" min="0" step="1">
+            <span class="field-error" id="err-produto-estoque-minimo">Informe uma quantidade válida.</span>
+          </div>
+          <div class="form-field full">
+            <label>Descrição</label>
+            <textarea id="produto-descricao" rows="2"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-produto')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar-produto">Salvar produto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nova movimentação -->
+<div class="modal" id="modal-mov">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h3>Nova movimentação de estoque</h3>
+      <button class="modal-close" onclick="closeModal('modal-mov')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-mov" novalidate>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Produto <span class="req">*</span></label>
+            <select id="mov-produto"><option value="">Selecione um produto</option></select>
+            <span class="field-error" id="err-mov-produto">Selecione um produto.</span>
+          </div>
+          <div class="form-field">
+            <label>Tipo <span class="req">*</span></label>
+            <select id="mov-tipo">
+              <option value="Entrada">Entrada</option>
+              <option value="Saída">Saída</option>
+              <option value="Ajuste">Ajuste</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Quantidade <span class="req">*</span></label>
+            <input type="number" id="mov-quantidade" min="1" step="1">
+            <span class="field-error" id="err-mov-quantidade">Informe uma quantidade maior que zero.</span>
+          </div>
+          <div class="form-field full">
+            <label>Motivo <span class="req">*</span></label>
+            <input type="text" id="mov-motivo" placeholder="Ex: Compra de fornecedor, venda balcão...">
+            <span class="field-error" id="err-mov-motivo">Informe o motivo da movimentação.</span>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-mov')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar-mov">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/estoque.js"></script>
+</body>
+</html>

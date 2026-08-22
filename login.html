@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — DistribuiPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo-mark">📦</div>
+      <div>
+        <h1>DistribuiPro</h1>
+        <span>Gestão para distribuidoras</span>
+      </div>
+    </div>
+
+    <h2>Acesse sua conta</h2>
+    <p class="sub">Entre com suas credenciais para continuar.</p>
+
+    <div class="login-error" id="login-error">E-mail ou senha inválidos. Tente novamente.</div>
+
+    <form id="login-form" novalidate>
+      <div class="form-field" style="margin-bottom:14px;">
+        <label for="email">E-mail <span class="req">*</span></label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="username">
+        <span class="field-error" id="err-email">Informe um e-mail válido.</span>
+      </div>
+      <div class="form-field" style="margin-bottom:18px;">
+        <label for="senha">Senha <span class="req">*</span></label>
+        <input type="password" id="senha" name="senha" placeholder="••••••••" autocomplete="current-password">
+        <span class="field-error" id="err-senha">Informe sua senha.</span>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:11px;">Entrar</button>
+    </form>
+
+    <div class="login-hint">
+      Acesso demonstrativo:<br>
+      admin@distribuipro.com&nbsp;/&nbsp;123456
+    </div>
+  </div>
+
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

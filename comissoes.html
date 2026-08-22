@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comissões — DistribuiPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-mark">📦</div>
+      <div><strong>DistribuiPro</strong><small>Gestão de distribuidora</small></div>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="ic">📊</span> Dashboard</a></li>
+      <li><a href="pedidos.html"><span class="ic">🧾</span> Pedidos</a></li>
+      <li><a href="estoque.html"><span class="ic">📦</span> Estoque</a></li>
+      <li><a href="clientes.html"><span class="ic">👥</span> Clientes</a></li>
+      <li><a href="vendedores.html"><span class="ic">🧑‍💼</span> Vendedores</a></li>
+      <li class="active"><a href="comissoes.html"><span class="ic">💰</span> Comissões</a></li>
+      <li><a href="entregas.html"><span class="ic">🚚</span> Entregas</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <div class="sidebar-user">
+        <div class="avatar">A</div>
+        <div class="who"><strong id="sidebar-user-email">admin@distribuipro.com</strong>Administrador</div>
+      </div>
+      <button class="btn-logout" id="btn-logout">Sair</button>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="sidebar-toggle">☰</button>
+        <div>
+          <p class="page-title">Comissões</p>
+          <p class="page-sub">Cálculo de comissões por vendedor e período</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="pill-date" id="pill-date"></span>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <div class="grid-kpi" id="kpi-comissoes"></div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="toolbar">
+            <div class="search-box">
+              <span class="ic">🔎</span>
+              <input type="text" id="busca-comissao" placeholder="Buscar vendedor...">
+            </div>
+            <select class="select-filter" id="filtro-periodo"></select>
+            <select class="select-filter" id="filtro-status-comissao">
+              <option value="">Todos os status</option>
+              <option value="Pendente">Pendente</option>
+              <option value="A pagar">A pagar</option>
+              <option value="Pago">Pago</option>
+            </select>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr><th>Vendedor</th><th>Período</th><th>Vendas</th><th>Pedidos</th><th>%</th><th>Comissão</th><th>Status</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tbl-comissoes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Detalhe da comissão -->
+<div class="modal" id="modal-ver-comissao">
+  <div class="modal-content modal-lg">
+    <div class="modal-head">
+      <h3>Detalhes da comissão</h3>
+      <button class="modal-close" onclick="closeModal('modal-ver-comissao')">✕</button>
+    </div>
+    <div class="modal-body" id="ver-comissao-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-ver-comissao')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/comissoes.js"></script>
+</body>
+</html>
